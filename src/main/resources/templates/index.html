@@ -26,53 +26,122 @@
     <title th:text="${titulo}">Título</title>
 </head>
 <body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Spring Boot</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbarNav" aria-controls="navbarNav"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active"><a class="nav-link" href="#">Home
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Spring Boot</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home
                     <span class="sr-only">(current)</span>
-                </a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/usuarios}">Usuarios</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1
-                class="text-secondary border border-success border-top-0 border-left-0 border-right-0"
-                th:text="${titulo}"></h1>
-        <p><a th:href="@{/nuevousuario}" class="btn btn-success btn-xs">Nuevo usuario</a></p>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>id</th>
-                <th>Usuario</th>
-                <th>Seguidores</th>
-                <th>Seguidos</th>
-                <th>editar</th>
-                <th>eliminar</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="usu: ${usuarios}">
-                <td th:text="${usu.getId()}"></td>
-                <td th:text="${usu.getNombreUsuario()}"></td>
-                <td th:text="${usu.getSeguidores().size()}"></td>
-                <td th:text="${usu.getSeguidos().size()}"></td>
-                <td><a class="btn btn-primary btn-xs" th:href="@{/perfil/} + ${usu.id}" th:text="'editar'"></a></td>
-                <td><a class="btn btn-danger btn-xs" th:href="@{/eliminar/} + ${usu.id}" th:text="'eliminar'" onclick="return confirm('Estás seguro que quieres eliminar?');"></a></td>
-            </tr>
-            </tbody>
-        </table>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/usuarios}">Usuarios</a>
+            </li>
+            <li>
+                <a th:href="@{/nuevousuario}" class="btn btn-success btn-xs">Nuevo usuario</a></p>
+            </li>
+        </ul>
     </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <form action="/buscaUsuario" method="post">
+                <div class="row align-items-center my-3">
+                    <div class="col-auto">Indique el usuario</div>
+                    <input type="text" class="col-auto" id="idusuario" name="idusuario">
+                    <div class="col-auto" th:text="${usuactivo} ? ${usuactivo.getIdUsuario()} + ' - ' + ${usuactivo.getNombre()} : 'Indique un usuario'" ></div>
+                    <button class="col-auto btn btn-success ms-5" type="submit">Buscar usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Usuarios que le siguen</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Usuario</th>
+                    <th>Seguido Por</th>
+                    <th>Sigue A</th>
+                    <th>editar</th>
+                    <th>eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="usu: ${seguidores}">
+                    <td>
+                        <a th:href="@{/{id}(id = ${usu.getIdUsuario()})}">
+                            <span th:text="${usu.getIdUsuario()}"></span>
+                        </a>
+                    </td>
+                    <td th:text="${usu.getNombre()}"></td>
+                    <td th:text="${usu.getSeguidoPor().size()}"></td>
+                    <td th:text="${usu.getSigueA().size()}"></td>
+                    <td>
+                        <a class="btn btn-primary btn-xs" th:href="@{/perfil/{id}(id = ${usu.getIdUsuario()})}">
+                            <span th:text="'editar'"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-danger btn-xs" th:href="@{/eliminar/{id}(id = ${usu.getIdUsuario()})}">
+                            <span th:text="'eliminar'" onclick="return confirm('Estás seguro que quieres eliminar?');">></span>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col">
+            <h3>Usuarios a los que sigue</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Usuario</th>
+                    <th>Seguidores</th>
+                    <th>Seguidos</th>
+                    <th>editar</th>
+                    <th>eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="usu: ${seguidos}">
+                    <td>
+                        <a th:href="@{/{id}(id = ${usu.getIdUsuario()})}">
+                            <span th:text="${usu.getIdUsuario()}"></span>
+                        </a>
+                    </td>
+                    <td th:text="${usu.getNombre()}"></td>
+                    <td th:text="${usu.getSeguidoPor().size()}"></td>
+                    <td th:text="${usu.getSigueA().size()}"></td>
+                    <td>
+                        <a class="btn btn-primary btn-xs" th:href="@{/perfil/{id}(id = ${usu.getIdUsuario()})}">
+                            <span th:text="'editar'"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-danger btn-xs" th:href="@{/eliminar/{id}(id = ${usu.getIdUsuario()})}">
+                            <span th:text="'eliminar'" onclick="return confirm('Estás seguro que quieres eliminar?');">></span>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
 
 <!-- Optional JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"

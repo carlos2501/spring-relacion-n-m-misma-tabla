@@ -1,3 +1,5 @@
+package org.cpl_cursos.java.pruebaNM;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
